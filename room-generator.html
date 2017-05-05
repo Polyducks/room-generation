@@ -1,0 +1,138 @@
+<style>
+	#room-title{
+		text-align: center;
+	}
+	#page-wrapper{
+		position: relative;
+		width: 300px;
+		margin: 0 auto;
+		height: 300px;
+	}
+	
+		#page-wrapper #room{
+			display: block;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%)translateY(-50%);
+			width: 200px;
+			height: 200px;
+			background-color: #6a2ab6;
+			-webkit-box-shadow: inset 10px 10px 7px 1px rgba(0,0,0,0.34);
+			-moz-box-shadow: inset 10px 10px 7px 1px rgba(0,0,0,0.34);
+			box-shadow: inset 10px 10px 7px 1px rgba(0,0,0,0.34);
+		}
+		#page-wrapper .dir{
+			position: absolute;
+		}
+		#page-wrapper #dir-0{
+			top: 0;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+		#page-wrapper #dir-1{
+			top: 50%;
+			right: 0;
+			transform: translateY(-50%);
+		}
+		#page-wrapper #dir-2{
+			bottom: 0;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+		#page-wrapper #dir-3{
+			top: 50%;
+			left: 0;
+			transform: translateY(-50%);
+		}
+</style>
+
+<h2 id="room-title">Room_Title</h2>
+<div id="page-wrapper">
+
+	<div id="room"></div>
+	<button id="dir-0" class="dir" data-direction="0">N</button>
+	<button id="dir-1" class="dir" data-direction="1">E</button>
+	<button id="dir-2" class="dir" data-direction="2">S</button>
+	<button id="dir-3" class="dir" data-direction="3">W</button>
+
+</div>
+
+<script>
+
+(function(){
+
+	//---------------------------
+	//ELEMENTS
+	//---------------------------
+	var el = {};
+	el.title = document.getElementById("room-title");
+	el.dirs = document.getElementsByClassName("dir");
+	//set event listener on the buttons
+	for ( var i = 0; i < el.dirs.length; i++ ){
+		el.dirs[i].addEventListener( "click", function(){
+			var direction = parseInt( this.getAttribute("data-direction") );
+			var nextRoom = roomList[ player.roomId ].exits[ direction ];
+			if ( nextRoom < roomList.length && nextRoom >= 0 ){
+				player.roomId = nextRoom;
+				Load_Room();
+			}
+		});
+	}
+
+	//---------------------------
+	//USEFUL FUNCTIONS
+	//---------------------------
+	function Random_Room_Name(){
+		return "A simple, bland room";
+	}
+	function Load_Room(){
+		var current = player.roomId;
+		var room = roomList[ current ];
+		el.title.innerHTML = room.name;
+		//numb out the other direction buttons that aren't valid
+	}
+
+	//---------------------------
+	//OBJECT DECLARATIONS
+	//---------------------------
+	function Room( id, name, x, y, exits, inv ){
+		this.id = id;
+		this.name = name;
+		this.x = x;
+		this.y = y;
+		this.exits = exits;
+		this.inv = inv;
+	}
+	
+	function Player(){
+		this.roomId = 0;
+	}
+	
+	//---------------------------
+	//VARIABLES
+	//---------------------------
+	var player = new Player();
+	var roomList = [];
+	var roomCount = Math.floor( Math.random()*10 ) + 20;
+	
+	
+	for ( var i = 0; i < roomCount; i++ ){
+		var id = i;
+		var name = Random_Room_Name() + "_" + i;
+		var x = i;
+		var y = 0;
+		var exits = [ -1, i+1, -1, i-1 ];
+		var inv = "";
+		var room = new Room( id, name, x, y, exits, inv );
+		roomList.push ( room );
+	}
+	
+	//---------------------------
+	//INITIALISE
+	//---------------------------
+	Load_Room();
+	
+})();
+
+</script>
